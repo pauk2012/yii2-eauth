@@ -96,14 +96,13 @@ abstract class ServiceBase extends \nodge\eauth\ServiceBase implements IAuthServ
 	 */
 	protected function getCallbackUrl() {
 		$request = Yii::$app->getRequest();
-        parse_str($_SERVER['QUERY_STRING'],$parsedQueryString);
+        $service = $request->getQueryParam('service');
+        if (isset($service))
+            $params = ['service' => $service];
+        else
+            $params = [];
 
-        foreach ($parsedQueryString as $key=>$var){
-            if ($key != 'service')
-                    unset($parsedQueryString[$key]);
-        }
-
-        $url = preg_replace('/(.*)\?(.*)/i', '$1?' . http_build_query($parsedQueryString), $request->getAbsoluteUrl());
+        $url = Yii::$app->controller->createAbsoluteUrl('', $params);
 
 		return $url;
 	}
